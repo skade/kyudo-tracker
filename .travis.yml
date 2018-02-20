@@ -2,7 +2,7 @@ language: rust
 rust: nightly
 cache: cargo
 before_script: |
-  if [[ -z "$(which cargo-web)" ]] then \
+  if [[ -z "$(which cargo-web)" ]]; then \
   cargo install cargo-web --force; \
   else echo "cargo-web already installed"; \
   fi
