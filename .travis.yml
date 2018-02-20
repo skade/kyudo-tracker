@@ -1,8 +1,11 @@
 language: rust
 rust: nightly
 cache: cargo
-before_script:
-  - cargo install cargo-web
+before_script: |
+  if [[ -z "$(which cargo-web)" ]] then \
+  cargo install cargo-web --force; \
+  else echo "cargo-web already installed"; \
+  fi
 script:
   - cargo web deploy --release
 deploy:
