@@ -1,0 +1,10 @@
+[package]
+name = "kyudo-tracker"
+version = "0.1.0"
+authors = ["Florian Gilcher <florian.gilcher@asquera.de>"]
+
+[dependencies]
+stdweb = { git = "https://github.com/koute/stdweb.git" }
+serde = "1"
+serde_json = "1"
+serde_derive = "1"

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Kyudo Tracker</title>
+	</head>
+	<body>
+		<section class="todoapp">
+			<header class="header">
+				<h1>Kyudo Tracker</h1>
+			</header>
+			<section class="main">
+				<section class="hitcounter">
+					<input class="mato" type="checkbox">
+					<input class="mato" type="checkbox">
+					<input class="mato" type="checkbox">
+					<input class="mato" type="checkbox">
+					<button class="register-set">Register hits</button>
+				</section>
+				<section class="current-session">
+					<ol class="sets"></ol>
+					<div>Number of shots: <span class="number-total">0</span></div>
+					<div>Number of hits: <span class="number-of-hits">0</span></div>
+					<div>Number of misses: <span class="number-of-misses">0</span></div>
+					<div>Hit rate: <span class="hit-rate">0</span></div>
+				</section>
+			</section>
+		</section>
+
+		<footer class="info">
+			<p>Implemented using the <a href="https://github.com/koute/stdweb">stdweb</a> project</p>
+		</footer>
+		<script src="js/app.js"></script>
+	</body>
+</html>
