@@ -1,4 +1,5 @@
 language: rust
+rust: nightly
 cache: cargo
 before_script:
   - cargo install cargo-web
