@@ -4,7 +4,7 @@ cache: cargo
 before_script:
   - cargo install cargo-web
 script:
-  - cargo web build --release
+  - cargo web deploy --release
 deploy:
   provider: pages
   local-dir: target/deploy
