@@ -1,0 +1,13 @@
+language: rust
+before_script:
+  - cargo install cargo-web
+script:
+  - cargo web build --release
+deploy:
+  provider: pages
+  local-dir: target/deploy
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: master
