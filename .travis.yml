@@ -1,8 +1,5 @@
 language: rust
-cache:
-  directories:
-    - /home/travis/.cargo/
-    - target
+cache: cargo
 before_script:
   - cargo install cargo-web
 script:
