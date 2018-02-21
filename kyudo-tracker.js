@@ -516,15 +516,6 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_91731db9b18c167a0dca230e25d8f4bbf6600f11": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelectorAll (($2));})());
             },
-            "__extjs_1fabc0ebb27ef89261582427650910a67df27026": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HashChangeEvent) | 0;
-            },
-            "__extjs_7ed1f62e776725bc93d54f5154abfb28a460024a": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof MouseEvent) | 0;
-            },
-            "__extjs_6335075a75e36f6bc0c9ba8dce389068e0a2d5d8": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Error) | 0;
-            },
             "__extjs_92703949057b4a5481134e61f673bf94160d6d50": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). firstChild ;})());
             },
@@ -545,6 +536,15 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             },
             "__extjs_de2896a7ccf316486788a4d0bc433c25d2f1a12b": function($0) {
                 var r = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );return (r instanceof DOMException) && (r.name === "NotFoundError");
+            },
+            "__extjs_1fabc0ebb27ef89261582427650910a67df27026": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HashChangeEvent) | 0;
+            },
+            "__extjs_7ed1f62e776725bc93d54f5154abfb28a460024a": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof MouseEvent) | 0;
+            },
+            "__extjs_6335075a75e36f6bc0c9ba8dce389068e0a2d5d8": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Error) | 0;
             },
             "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
