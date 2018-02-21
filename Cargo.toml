@@ -8,3 +8,4 @@ stdweb = { git = "https://github.com/koute/stdweb.git" }
 serde = "1"
 serde_json = "1"
 serde_derive = "1"
+futures = "0.1.18"

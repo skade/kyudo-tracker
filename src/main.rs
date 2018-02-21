@@ -5,6 +5,10 @@ extern crate stdweb;
 extern crate serde_derive;
 extern crate serde_json;
 
+extern crate futures;
+
+use futures::Future;
+
 use stdweb::web::Node;
 use stdweb::web::NodeList;
 use std::cell::RefCell;
@@ -29,6 +33,8 @@ use stdweb::web::event::{
 };
 
 use stdweb::web::html_element::InputElement;
+
+use stdweb::{Null, Promise, PromiseFuture};
 
 // Shamelessly stolen from webplatform's TodoMVC example.
 macro_rules! enclose {
@@ -214,26 +220,54 @@ fn update_span(selector: &str, value: &str) {
 fn main() {
     stdweb::initialize();
 
-    let state = window().local_storage().get( "state" ).and_then( |state_json| {
-        serde_json::from_str( state_json.as_str() ).ok()
-    }).unwrap_or_default();
-    let state = StateRef::new(state);
+    let db = js! {
+        return new PouchDB("kyudo-track");
+    };
 
-    let register_hits_button: Element = document().query_selector( ".register-set" ).unwrap().unwrap();
-    register_hits_button.add_event_listener( enclose!( (state) move |_: ClickEvent| {
-        save_current_set(&state);
+    let doc: PromiseFuture<String> = js! {
+        let db = @{&db};
+        return db.get("mydoc");
+    }.try_into().unwrap();
 
-        save_state(&state);
-        update_dom(&state);
-    }));
+    let state_future = doc.and_then(|state_json| {
 
-    window().add_event_listener( enclose!( (state) move |_: HashChangeEvent| {
-        save_state( &state );
-        update_dom(&state);
-    }));
+        serde_json::from_str( state_json.as_str() ).map_err(|_| stdweb::web::error::Error::new("oops"))
 
-    save_state( &state );
-    update_dom(&state);
+    }).then(|result| {
+        match result {
+            Ok(parsed_state) => Ok(StateRef::new(parsed_state)),
+            _ => Ok(StateRef::new(State::default()))
+        }        
+    }).and_then(|state| {
+
+        let register_hits_button: Element = document().query_selector( ".register-set" ).unwrap().unwrap();
+        register_hits_button.add_event_listener( enclose!( (state) move |_: ClickEvent| {
+            save_current_set(&state);
+
+            save_state(&state);
+            update_dom(&state);
+        }));
+
+        window().add_event_listener( enclose!( (state) move |_: HashChangeEvent| {
+            save_state( &state );
+            update_dom(&state);
+        }));
+
+        Ok(())
+    }).or_else(|_: stdweb::web::error::Error| {
+        console!( log, format!( "Hit Error" ) );
+        Err(())
+    });
+
+    PromiseFuture::spawn(state_future);
+
+    // let state = window().local_storage().get( "state" ).and_then( |state_json| {
+    //     serde_json::from_str( state_json.as_str() ).ok()
+    // }).unwrap_or_default();
+    //let state = StateRef::new(state);
+
+    // save_state( &state );
+    // update_dom(&state);
 
     stdweb::event_loop();
 }
