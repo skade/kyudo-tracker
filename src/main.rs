@@ -142,13 +142,10 @@ fn save_state( state: &StateRef ) {
         return new PouchDB("kyudo-track");
     };
 
-    let state = &*state_borrow;
     let doc: PromiseFuture<stdweb::Value> = js! {
-        console.log("Saving!");
-
         var db = @{&db};
-        var state =  @{state};
-        console.log( state );
+        var state =  @{&*state_borrow};
+
         state._id = "mydoc";
         return db.get("mydoc").then(function(doc) {
             state._rev = doc._rev;
