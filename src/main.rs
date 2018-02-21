@@ -1,3 +1,5 @@
+#![recursion_limit="128"]
+
 #[macro_use]
 extern crate stdweb;
 
@@ -132,7 +134,6 @@ impl std::ops::Deref for StateRef {
 }
 
 fn save_state( state: &StateRef ) {
-    console!( log, format!( "Saving!" ) );
 
     let state_borrow = state.borrow();
 
@@ -142,12 +143,21 @@ fn save_state( state: &StateRef ) {
 
     let state = &*state_borrow;
     let doc: PromiseFuture<String> = js! {
+        console.log("Saving!");
+
         var db = @{&db};
         var state =  @{state};
         console.log( state );
         state._id = "mydoc";
-        return db.post(state);
+        return db.get("mydoc").then(function(doc) {
+            state._rev = doc._rev;
+            return db.put(state);
+        }).catch(function(err) {
+            console.log("saving new state " + state);
+            return db.post(state);
+        });
     }.try_into().unwrap();
+
     let future = doc.and_then(|_| {
         console!( log, format!( "Saved ") );
         Ok(())
@@ -157,9 +167,6 @@ fn save_state( state: &StateRef ) {
     });
 
     PromiseFuture::spawn(future);
-
-    //
-    //window().local_storage().insert( "state", state_json.as_str() ).unwrap();
 }
 
 fn save_current_set( state: &StateRef ) {
