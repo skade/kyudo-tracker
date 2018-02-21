@@ -104,6 +104,7 @@ struct State {
 }
 
 js_serializable!( State );
+js_deserializable!( State );
 
 impl State {
     fn debug(&self) {
@@ -142,7 +143,7 @@ fn save_state( state: &StateRef ) {
     };
 
     let state = &*state_borrow;
-    let doc: PromiseFuture<String> = js! {
+    let doc: PromiseFuture<stdweb::Value> = js! {
         console.log("Saving!");
 
         var db = @{&db};
@@ -257,16 +258,13 @@ fn main() {
         return new PouchDB("kyudo-track");
     };
 
-    let doc: PromiseFuture<String> = js! {
+    let doc: PromiseFuture<State> = js! {
         let db = @{&db};
+        console.log("getting data!");
         return db.get("mydoc");
     }.try_into().unwrap();
 
-    let state_future = doc.and_then(|state_json| {
-
-        serde_json::from_str( state_json.as_str() ).map_err(|_| stdweb::web::error::Error::new("oops"))
-
-    }).then(|result| {
+    let state_future = doc.then(|result| {
         match result {
             Ok(parsed_state) => Ok(StateRef::new(parsed_state)),
             _ => Ok(StateRef::new(State::default()))
