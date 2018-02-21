@@ -435,11 +435,32 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_93af82e49c19ea054c46b4bbf6fdd44f59c8bb67": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let state = ($1); console.log ("Current State is: " + state)})());
             },
+            "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
+            },
+            "__extjs_48322ff02d4d0b405a5634f00d964d936cce2417": function($0) {
+                Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB ("kyudo-track");})());
+            },
+            "__extjs_1dced290fbc4ab10710bec669fda19cb9a502ba3": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var state = ($2); console.log (state); state._id = "mydoc" ; return db.post (state);})());
+            },
             "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
             },
             "__extjs_72ed4dd7cc16a087b641b9e836cf402717082c62": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){($1). checked = false ;})());
+            },
+            "__extjs_e9b6e0f1336a127e042d698c0bf87ea1e91ad3ad": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let db = ($1); return db.get ("mydoc");})());
+            },
+            "__extjs_ee41f864457c794c278cdcafc28967ffbac29706": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1);})());
+            },
+            "__extjs_93b9872dc3d816765ab0e68585457a4b8d33560b": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);Promise.resolve (). then (function (){($0)();});
+            },
+            "__extjs_b99a06f7004f71b3f4e223fbd9f24cf2620b1047": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). message ;})());
             },
             "__extjs_1c8769c3b326d77ceb673ada3dc887cf1d509509": function($0) {
                 Module.STDWEB_PRIVATE.from_js($0, (function(){return document ;})());
@@ -449,12 +470,6 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             },
             "__extjs_dc4a9844a3da9e83cb7a74b4e08eed6ff1be91f9": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). createTextNode (($2));})());
-            },
-            "__extjs_27ff97ff577dd39402cb36ac5c70bcb0711afba8": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). getItem (($2));})());
-            },
-            "__extjs_39e486671818674ef5d1eeb54119acb740296cc9": function($0, $1, $2) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);($0). setItem (($1), ($2));
             },
             "__extjs_222c2fb5a29f68d0c91605a201d353ebe248e0ee": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1)[($2)];})());
@@ -468,26 +483,32 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_72fc447820458c720c68d0d8e078ede631edd723": function($0, $1, $2) {
                 console.error( 'Panic location:', Module.STDWEB_PRIVATE.to_js_string( $0, $1 ) + ':' + $2 );
             },
+            "__extjs_ff5103e6cc179d13b4c7a785bdce2708fd559fc0": function($0) {
+                Module.STDWEB_PRIVATE.tmp = Module.STDWEB_PRIVATE.to_js( $0 );
+            },
             "__extjs_db0226ae1bbecd407e9880ee28ddc70fc3322d9c": function($0) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);Module.STDWEB_PRIVATE.unregister_raw_value (($0));
             },
             "__extjs_74d5764ddc102a8d3b6252116087a68f2db0c9d4": function($0) {
                 Module.STDWEB_PRIVATE.from_js($0, (function(){return window ;})());
             },
-            "__extjs_f484b2485bfbca4799114a1eed5e17c124da2193": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). localStorage ;})());
+            "__extjs_4cc2b2ed53586a2bd32ca2206724307e82bb32ff": function($0, $1) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);($0). appendChild (($1));
             },
             "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
+            },
+            "__extjs_17e4e94f0ce5ce7395aa490886a2f956d3737afa": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return new Error (($1));})());
+            },
+            "__extjs_6335075a75e36f6bc0c9ba8dce389068e0a2d5d8": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Error) | 0;
             },
             "__extjs_92703949057b4a5481134e61f673bf94160d6d50": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). firstChild ;})());
             },
             "__extjs_cf32fb39093cd2549f37c2d392ef3198dcaa2ad4": function($0) {
                 return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Node) | 0;
-            },
-            "__extjs_4cc2b2ed53586a2bd32ca2206724307e82bb32ff": function($0, $1) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);($0). appendChild (($1));
             },
             "__extjs_e031828dc4b7f1b8d9625d60486f03b0936c3f4f": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){try {return {value : function (){return ($1). removeChild (($2));}(), success : true};}catch (error){return {error : error , success : false};}})());
@@ -504,11 +525,14 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_de2896a7ccf316486788a4d0bc433c25d2f1a12b": function($0) {
                 var r = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );return (r instanceof DOMException) && (r.name === "NotFoundError");
             },
+            "__extjs_9e1ed4a3385107a34e4714c224d2905a94d4e3ee": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Promise) | 0;
+            },
+            "__extjs_945eb2b8fb56cb174558d6a1d81362ec08745d51": function($0, $1) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);var callback = ($0); ($1). then (function (value){callback (value , true);}, function (value){callback (value , false);});
+            },
             "__extjs_1fabc0ebb27ef89261582427650910a67df27026": function($0) {
                 return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HashChangeEvent) | 0;
-            },
-            "__extjs_ff5103e6cc179d13b4c7a785bdce2708fd559fc0": function($0) {
-                Module.STDWEB_PRIVATE.tmp = Module.STDWEB_PRIVATE.to_js( $0 );
             },
             "__extjs_7ed1f62e776725bc93d54f5154abfb28a460024a": function($0) {
                 return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof MouseEvent) | 0;
