@@ -444,8 +444,8 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_48322ff02d4d0b405a5634f00d964d936cce2417": function($0) {
                 Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB ("kyudo-track");})());
             },
-            "__extjs_b9fad712b6d08150e2227a1ca4203a4f6c0153fa": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){console.log ("Saving!"); var db = ($1); var state = ($2); console.log (state); state._id = "mydoc" ; return db.get ("mydoc"). then (function (doc){state._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
+            "__extjs_93f0936d6fd3f38073f1ae0c7e6bcc9da8bac513": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var state = ($2); state._id = "mydoc" ; return db.get ("mydoc"). then (function (doc){state._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
             },
             "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
