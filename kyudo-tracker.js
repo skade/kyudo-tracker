@@ -435,14 +435,11 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_93af82e49c19ea054c46b4bbf6fdd44f59c8bb67": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let state = ($1); console.log ("Current State is: " + state)})());
             },
-            "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
-            },
             "__extjs_48322ff02d4d0b405a5634f00d964d936cce2417": function($0) {
                 Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB ("kyudo-track");})());
             },
-            "__extjs_1dced290fbc4ab10710bec669fda19cb9a502ba3": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var state = ($2); console.log (state); state._id = "mydoc" ; return db.post (state);})());
+            "__extjs_b9fad712b6d08150e2227a1ca4203a4f6c0153fa": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){console.log ("Saving!"); var db = ($1); var state = ($2); console.log (state); state._id = "mydoc" ; return db.get ("mydoc"). then (function (doc){state._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
             },
             "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
@@ -497,6 +494,9 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             },
             "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
+            },
+            "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
             },
             "__extjs_17e4e94f0ce5ce7395aa490886a2f956d3737afa": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return new Error (($1));})());
