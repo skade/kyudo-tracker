@@ -95,11 +95,13 @@ impl Session {
     }
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct State {
     past: Vec<Session>,
     current: Session
 }
+
+js_serializable!( State );
 
 impl State {
     fn debug(&self) {
@@ -130,10 +132,34 @@ impl std::ops::Deref for StateRef {
 }
 
 fn save_state( state: &StateRef ) {
+    console!( log, format!( "Saving!" ) );
+
     let state_borrow = state.borrow();
 
-    let state_json = serde_json::to_string( &*state_borrow ).unwrap();
-    window().local_storage().insert( "state", state_json.as_str() ).unwrap();
+    let db = js! {
+        return new PouchDB("kyudo-track");
+    };
+
+    let state = &*state_borrow;
+    let doc: PromiseFuture<String> = js! {
+        var db = @{&db};
+        var state =  @{state};
+        console.log( state );
+        state._id = "mydoc";
+        return db.post(state);
+    }.try_into().unwrap();
+    let future = doc.and_then(|_| {
+        console!( log, format!( "Saved ") );
+        Ok(())
+    }).or_else(|e| {
+        console!( log, format!( "Hit Error: {}", e ) );
+        Err(())
+    });
+
+    PromiseFuture::spawn(future);
+
+    //
+    //window().local_storage().insert( "state", state_json.as_str() ).unwrap();
 }
 
 fn save_current_set( state: &StateRef ) {
@@ -255,7 +281,7 @@ fn main() {
 
         Ok(())
     }).or_else(|_: stdweb::web::error::Error| {
-        console!( log, format!( "Hit Error" ) );
+        console!( log, format!( "Hit Error loading" ) );
         Err(())
     });
 
