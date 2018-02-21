@@ -289,13 +289,5 @@ fn main() {
 
     PromiseFuture::spawn(state_future);
 
-    // let state = window().local_storage().get( "state" ).and_then( |state_json| {
-    //     serde_json::from_str( state_json.as_str() ).ok()
-    // }).unwrap_or_default();
-    //let state = StateRef::new(state);
-
-    // save_state( &state );
-    // update_dom(&state);
-
     stdweb::event_loop();
 }
