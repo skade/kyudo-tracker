@@ -438,23 +438,23 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_6ae2f0d3420b3969fbdee9a1a7eba4cef664b99f": function($0) {
                 return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Object) | 0;
             },
+            "__extjs_a3ce11f32db376f1bd7e64a57118a6fdcff384de": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB (($1));})());
+            },
+            "__extjs_c6c601099276bb9dc8ea74d54bdc9ce86899310b": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){let db = ($1); let id = ($2); return db.get (id);})());
+            },
+            "__extjs_bbf66612224e54eefe8ad12dddd09e97409d9639": function($0, $1, $2, $3) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var new_doc = ($2); var id = ($3); new_doc._id = id ; return db.get (id). then (function (doc){new_doc._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
+            },
             "__extjs_93af82e49c19ea054c46b4bbf6fdd44f59c8bb67": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let state = ($1); console.log ("Current State is: " + state)})());
-            },
-            "__extjs_48322ff02d4d0b405a5634f00d964d936cce2417": function($0) {
-                Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB ("kyudo-track");})());
-            },
-            "__extjs_93f0936d6fd3f38073f1ae0c7e6bcc9da8bac513": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var state = ($2); state._id = "mydoc" ; return db.get ("mydoc"). then (function (doc){state._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
             },
             "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
             },
             "__extjs_72ed4dd7cc16a087b641b9e836cf402717082c62": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){($1). checked = false ;})());
-            },
-            "__extjs_a5f2ffe43d8dd5b462959ec6c032502e4faf4e84": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let db = ($1); console.log ("getting data!"); return db.get ("mydoc");})());
             },
             "__extjs_ee41f864457c794c278cdcafc28967ffbac29706": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1);})());
@@ -501,20 +501,14 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             "__extjs_74d5764ddc102a8d3b6252116087a68f2db0c9d4": function($0) {
                 Module.STDWEB_PRIVATE.from_js($0, (function(){return window ;})());
             },
-            "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
+            "__extjs_9e1ed4a3385107a34e4714c224d2905a94d4e3ee": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Promise) | 0;
             },
             "__extjs_4cc2b2ed53586a2bd32ca2206724307e82bb32ff": function($0, $1) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);($0). appendChild (($1));
             },
-            "__extjs_9e1ed4a3385107a34e4714c224d2905a94d4e3ee": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Promise) | 0;
-            },
-            "__extjs_496ebd7b1bc0e6eebd7206e8bee7671ea3b8006f": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelector (($2));})());
-            },
-            "__extjs_91731db9b18c167a0dca230e25d8f4bbf6600f11": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelectorAll (($2));})());
+            "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
             },
             "__extjs_92703949057b4a5481134e61f673bf94160d6d50": function($0, $1) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). firstChild ;})());
@@ -548,6 +542,12 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
             },
             "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
+            },
+            "__extjs_496ebd7b1bc0e6eebd7206e8bee7671ea3b8006f": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelector (($2));})());
+            },
+            "__extjs_91731db9b18c167a0dca230e25d8f4bbf6600f11": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelectorAll (($2));})());
             },
             "__extjs_945eb2b8fb56cb174558d6a1d81362ec08745d51": function($0, $1) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);var callback = ($0); ($1). then (function (value){callback (value , true);}, function (value){callback (value , false);});
