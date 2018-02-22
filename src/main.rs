@@ -189,11 +189,9 @@ impl std::ops::Deref for StateRef {
     }
 }
 
-fn save_state( state: &StateRef ) {
+fn save_state( state: &StateRef, db: Rc<Database> ) {
 
     let state_borrow = state.borrow();
-
-    let db = Database::new("kyudo-track");
 
     let insertion = db.insert_or_update(&*state_borrow, "mydoc");
 
@@ -292,25 +290,25 @@ fn update_span(selector: &str, value: &str) {
 fn main() {
     stdweb::initialize();
 
-    let db = Database::new("kyudo-track");
+    let db = Rc::new(Database::new("kyudo-track"));
 
     let state_future = db.get::<State>("mydoc").then(|result| {
         match result {
             Ok(parsed_state) => Ok(StateRef::new(parsed_state)),
             _ => Ok(StateRef::new(State::default()))
         }        
-    }).and_then(|state| {
+    }).and_then(move |state| {
 
         let register_hits_button: Element = document().query_selector( ".register-set" ).unwrap().unwrap();
-        register_hits_button.add_event_listener( enclose!( (state) move |_: ClickEvent| {
+        register_hits_button.add_event_listener( enclose!( (state, db) move |_: ClickEvent| {
             save_current_set(&state);
 
-            save_state(&state);
+            save_state(&state, db.clone());
             update_dom(&state);
         }));
 
-        window().add_event_listener( enclose!( (state) move |_: HashChangeEvent| {
-            save_state( &state );
+        window().add_event_listener( enclose!( (state, db) move |_: HashChangeEvent| {
+            save_state(&state, db.clone());
             update_dom(&state);
         }));
 
