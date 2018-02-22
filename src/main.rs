@@ -3,12 +3,15 @@
 #[macro_use]
 extern crate stdweb;
 
+extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 
 extern crate futures;
 
+use stdweb::JsSerialize;
+use stdweb::unstable::TryFrom;
 use futures::Future;
 
 use stdweb::web::Node;
@@ -36,7 +39,7 @@ use stdweb::web::event::{
 
 use stdweb::web::html_element::InputElement;
 
-use stdweb::{Null, Promise, PromiseFuture};
+use stdweb::{Value, Null, Promise, PromiseFuture};
 
 // Shamelessly stolen from webplatform's TodoMVC example.
 macro_rules! enclose {
@@ -46,6 +49,58 @@ macro_rules! enclose {
             $y
         }
     };
+}
+
+struct Database {
+    db: Value
+}
+
+impl Database {
+    fn new(name: &str) -> Database {
+        let db = js! {
+            return new PouchDB(@{name});
+        };
+
+        Database { db: db }
+    }
+
+    fn get<T: 'static>(&self, id: &str) -> PromiseFuture<T>
+    where T: TryFrom<stdweb::Value>,
+          <T as stdweb::unstable::TryFrom<stdweb::Value>>::Error: std::fmt::Debug {
+
+        let promise = js! {
+            let db = @{&self.db};
+            let id = @{id};
+
+            return db.get(id);
+        }.try_into().unwrap();
+
+        promise
+    }
+
+    fn insert_or_update<T>(&self, doc: &T, id: &str) -> PromiseFuture<T>
+        where T: JsSerialize + 'static,
+              T: TryFrom<stdweb::Value>,
+              <T as stdweb::unstable::TryFrom<stdweb::Value>>::Error: std::fmt::Debug {
+
+        let doc: PromiseFuture<T> = js! {
+            var db = @{&self.db};
+            var new_doc = @{&doc};
+            var id = @{id};
+
+            new_doc._id = id;
+
+            return db.get(id).then(function(doc) {
+                new_doc._rev = doc._rev;
+                return db.put(state);
+            }).catch(function(err) {
+                console.log("saving new state " + state);
+                return db.post(state);
+            });
+        }.try_into().unwrap();
+
+        doc
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -138,25 +193,11 @@ fn save_state( state: &StateRef ) {
 
     let state_borrow = state.borrow();
 
-    let db = js! {
-        return new PouchDB("kyudo-track");
-    };
+    let db = Database::new("kyudo-track");
 
-    let doc: PromiseFuture<stdweb::Value> = js! {
-        var db = @{&db};
-        var state =  @{&*state_borrow};
+    let insertion = db.insert_or_update(&*state_borrow, "mydoc");
 
-        state._id = "mydoc";
-        return db.get("mydoc").then(function(doc) {
-            state._rev = doc._rev;
-            return db.put(state);
-        }).catch(function(err) {
-            console.log("saving new state " + state);
-            return db.post(state);
-        });
-    }.try_into().unwrap();
-
-    let future = doc.and_then(|_| {
+    let future = insertion.and_then(|_| {
         console!( log, format!( "Saved ") );
         Ok(())
     }).or_else(|e| {
@@ -251,17 +292,9 @@ fn update_span(selector: &str, value: &str) {
 fn main() {
     stdweb::initialize();
 
-    let db = js! {
-        return new PouchDB("kyudo-track");
-    };
+    let db = Database::new("kyudo-track");
 
-    let doc: PromiseFuture<State> = js! {
-        let db = @{&db};
-        console.log("getting data!");
-        return db.get("mydoc");
-    }.try_into().unwrap();
-
-    let state_future = doc.then(|result| {
+    let state_future = db.get::<State>("mydoc").then(|result| {
         match result {
             Ok(parsed_state) => Ok(StateRef::new(parsed_state)),
             _ => Ok(StateRef::new(State::default()))
@@ -281,6 +314,7 @@ fn main() {
             update_dom(&state);
         }));
 
+        update_dom(&state);
         Ok(())
     }).or_else(|_: stdweb::web::error::Error| {
         console!( log, format!( "Hit Error loading" ) );
