@@ -294,6 +294,9 @@ Module.STDWEB_PRIVATE.to_js_string = function to_js_string( index, length ) {
                     w = HEAPU8[ index++ ];
                 }
                 ch = (init & 7) << 18 | ((y_z << 6) | (w & 63));
+
+                output += String.fromCharCode( 0xD7C0 + (ch >> 10) );
+                ch = 0xDC00 + (ch & 0x3FF);
             }
         }
         output += String.fromCharCode( ch );
@@ -302,63 +305,71 @@ Module.STDWEB_PRIVATE.to_js_string = function to_js_string( index, length ) {
     return output;
 };
 
-var id_to_ref_map = {};
-var id_to_refcount_map = {};
-var ref_to_id_map = new WeakMap();
-var last_refid = 1;
+Module.STDWEB_PRIVATE.id_to_ref_map = {};
+Module.STDWEB_PRIVATE.id_to_refcount_map = {};
+Module.STDWEB_PRIVATE.ref_to_id_map = new WeakMap();
+Module.STDWEB_PRIVATE.last_refid = 1;
 
-var id_to_raw_value_map = {};
-var last_raw_value_id = 1;
+Module.STDWEB_PRIVATE.id_to_raw_value_map = {};
+Module.STDWEB_PRIVATE.last_raw_value_id = 1;
 
 Module.STDWEB_PRIVATE.acquire_rust_reference = function( reference ) {
     if( reference === undefined || reference === null ) {
         return 0;
     }
 
+    var id_to_refcount_map = Module.STDWEB_PRIVATE.id_to_refcount_map;
+    var id_to_ref_map = Module.STDWEB_PRIVATE.id_to_ref_map;
+    var ref_to_id_map = Module.STDWEB_PRIVATE.ref_to_id_map;
+
     var refid = ref_to_id_map.get( reference );
     if( refid === undefined ) {
-        refid = last_refid++;
+        refid = Module.STDWEB_PRIVATE.last_refid++;
         ref_to_id_map.set( reference, refid );
+    }
+
+    if( refid in id_to_ref_map ) {
+        id_to_refcount_map[ refid ]++;
+    } else {
         id_to_ref_map[ refid ] = reference;
         id_to_refcount_map[ refid ] = 1;
-    } else {
-        id_to_refcount_map[ refid ]++;
     }
 
     return refid;
 };
 
 Module.STDWEB_PRIVATE.acquire_js_reference = function( refid ) {
-    return id_to_ref_map[ refid ];
+    return Module.STDWEB_PRIVATE.id_to_ref_map[ refid ];
 };
 
 Module.STDWEB_PRIVATE.increment_refcount = function( refid ) {
-    id_to_refcount_map[ refid ]++;
+    Module.STDWEB_PRIVATE.id_to_refcount_map[ refid ]++;
 };
 
 Module.STDWEB_PRIVATE.decrement_refcount = function( refid ) {
+    var id_to_refcount_map = Module.STDWEB_PRIVATE.id_to_refcount_map;
+    var id_to_ref_map = Module.STDWEB_PRIVATE.id_to_ref_map;
     id_to_refcount_map[ refid ]--;
     if( id_to_refcount_map[ refid ] === 0 ) {
         var reference = id_to_ref_map[ refid ];
         delete id_to_ref_map[ refid ];
         delete id_to_refcount_map[ refid ];
-        ref_to_id_map.delete( reference );
     }
 };
 
 Module.STDWEB_PRIVATE.register_raw_value = function( value ) {
-    var id = last_raw_value_id++;
-    id_to_raw_value_map[ id ] = value;
+    var id = Module.STDWEB_PRIVATE.last_raw_value_id++;
+    Module.STDWEB_PRIVATE.id_to_raw_value_map[ id ] = value;
     return id;
 };
 
 Module.STDWEB_PRIVATE.unregister_raw_value = function( id ) {
-    delete id_to_raw_value_map[ id ];
+    delete Module.STDWEB_PRIVATE.id_to_raw_value_map[ id ];
 };
 
 Module.STDWEB_PRIVATE.get_raw_value = function( id ) {
-    return id_to_raw_value_map[ id ];
-}
+    return Module.STDWEB_PRIVATE.id_to_raw_value_map[ id ];
+};
 
 Module.STDWEB_PRIVATE.alloc = function alloc( size ) {
     return Module.web_malloc( size );
@@ -423,134 +434,134 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
 
     const __imports = {
         env: {
-            "__extjs_e46ab2619239db9ed13181482883f6d948e04edc": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HTMLElement) | 0;
-            },
-            "__extjs_9f22d4ca7bc938409787341b7db181f8dd41e6df": function($0) {
-                Module.STDWEB_PRIVATE.increment_refcount( $0 );
-            },
-            "__extjs_80d6d56760c65e49b7be8b6b01c1ea861b046bf0": function($0) {
-                Module.STDWEB_PRIVATE.decrement_refcount( $0 );
-            },
-            "__extjs_fe1e80bdcfe7f7cb820b64a40f6d286cbd345955": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Array) | 0;
-            },
-            "__extjs_6ae2f0d3420b3969fbdee9a1a7eba4cef664b99f": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Object) | 0;
-            },
-            "__extjs_a3ce11f32db376f1bd7e64a57118a6fdcff384de": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB (($1));})());
-            },
-            "__extjs_c6c601099276bb9dc8ea74d54bdc9ce86899310b": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){let db = ($1); let id = ($2); return db.get (id);})());
-            },
-            "__extjs_bbf66612224e54eefe8ad12dddd09e97409d9639": function($0, $1, $2, $3) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var new_doc = ($2); var id = ($3); new_doc._id = id ; return db.get (id). then (function (doc){new_doc._rev = doc._rev ; return db.put (state);}). catch (function (err){console.log ("saving new state " + state); return db.post (state);});})());
-            },
-            "__extjs_93af82e49c19ea054c46b4bbf6fdd44f59c8bb67": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let state = ($1); console.log ("Current State is: " + state)})());
-            },
-            "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
-            },
-            "__extjs_72ed4dd7cc16a087b641b9e836cf402717082c62": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){($1). checked = false ;})());
-            },
-            "__extjs_ee41f864457c794c278cdcafc28967ffbac29706": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1);})());
-            },
-            "__extjs_93b9872dc3d816765ab0e68585457a4b8d33560b": function($0) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);Promise.resolve (). then (function (){($0)();});
-            },
-            "__extjs_b99a06f7004f71b3f4e223fbd9f24cf2620b1047": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). message ;})());
-            },
-            "__extjs_1c8769c3b326d77ceb673ada3dc887cf1d509509": function($0) {
-                Module.STDWEB_PRIVATE.from_js($0, (function(){return document ;})());
+            "__extjs_5ecfd7ee5cecc8be26c1e6e3c90ce666901b547c": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). error ;})());
             },
             "__extjs_a8e1d9cfe0b41d7d61b849811ad1cfba32de989b": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). createElement (($2));})());
             },
-            "__extjs_dc4a9844a3da9e83cb7a74b4e08eed6ff1be91f9": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). createTextNode (($2));})());
-            },
-            "__extjs_f814fda503cb20016f78481f85431d48a7c4e731": function($0, $1) {
-                var object = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );Module.STDWEB_PRIVATE.serialize_object( $1, object );
-            },
-            "__extjs_8c32019649bb581b1b742eeedfc410e2bedd56a6": function($0, $1) {
-                var array = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );Module.STDWEB_PRIVATE.serialize_array( $1, array );
-            },
-            "__extjs_222c2fb5a29f68d0c91605a201d353ebe248e0ee": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1)[($2)];})());
-            },
-            "__extjs_dc2fd915bd92f9e9c6a3bd15174f1414eee3dbaf": function() {
-                console.error( 'Encountered a panic!' );
-            },
-            "__extjs_97495987af1720d8a9a923fa4683a7b683e3acd6": function($0, $1) {
-                console.error( 'Panic error message:', Module.STDWEB_PRIVATE.to_js_string( $0, $1 ) );
-            },
-            "__extjs_72fc447820458c720c68d0d8e078ede631edd723": function($0, $1, $2) {
-                console.error( 'Panic location:', Module.STDWEB_PRIVATE.to_js_string( $0, $1 ) + ':' + $2 );
-            },
-            "__extjs_ff5103e6cc179d13b4c7a785bdce2708fd559fc0": function($0) {
-                Module.STDWEB_PRIVATE.tmp = Module.STDWEB_PRIVATE.to_js( $0 );
-            },
-            "__extjs_db0226ae1bbecd407e9880ee28ddc70fc3322d9c": function($0) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);Module.STDWEB_PRIVATE.unregister_raw_value (($0));
-            },
-            "__extjs_74d5764ddc102a8d3b6252116087a68f2db0c9d4": function($0) {
-                Module.STDWEB_PRIVATE.from_js($0, (function(){return window ;})());
-            },
-            "__extjs_9e1ed4a3385107a34e4714c224d2905a94d4e3ee": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Promise) | 0;
-            },
-            "__extjs_4cc2b2ed53586a2bd32ca2206724307e82bb32ff": function($0, $1) {
-                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);($0). appendChild (($1));
-            },
-            "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
-            },
-            "__extjs_92703949057b4a5481134e61f673bf94160d6d50": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). firstChild ;})());
-            },
-            "__extjs_cf32fb39093cd2549f37c2d392ef3198dcaa2ad4": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Node) | 0;
-            },
-            "__extjs_e031828dc4b7f1b8d9625d60486f03b0936c3f4f": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){try {return {value : function (){return ($1). removeChild (($2));}(), success : true};}catch (error){return {error : error , success : false};}})());
-            },
-            "__extjs_a3b76c5b7916fd257ee3f362dc672b974e56c476": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). success ;})());
-            },
-            "__extjs_a342681e5c1e3fb0bdeac6e35d67bf944fcd4102": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). value ;})());
-            },
-            "__extjs_5ecfd7ee5cecc8be26c1e6e3c90ce666901b547c": function($0, $1) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). error ;})());
-            },
-            "__extjs_de2896a7ccf316486788a4d0bc433c25d2f1a12b": function($0) {
-                var r = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );return (r instanceof DOMException) && (r.name === "NotFoundError");
-            },
-            "__extjs_1fabc0ebb27ef89261582427650910a67df27026": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HashChangeEvent) | 0;
-            },
-            "__extjs_7ed1f62e776725bc93d54f5154abfb28a460024a": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof MouseEvent) | 0;
-            },
-            "__extjs_6335075a75e36f6bc0c9ba8dce389068e0a2d5d8": function($0) {
-                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Error) | 0;
+            "__extjs_80d6d56760c65e49b7be8b6b01c1ea861b046bf0": function($0) {
+                Module.STDWEB_PRIVATE.decrement_refcount( $0 );
             },
             "__extjs_da7526dacc33bb6de7714dde287806f568820e31": function($0) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);console.log (($0));
             },
+            "__extjs_7c5535365a3df6a4cc1f59c4a957bfce1dbfb8ee": function($0, $1, $2, $3) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var listener = ($1); ($2). addEventListener (($3), listener); return listener ;})());
+            },
+            "__extjs_a3b76c5b7916fd257ee3f362dc672b974e56c476": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). success ;})());
+            },
+            "__extjs_dc4a9844a3da9e83cb7a74b4e08eed6ff1be91f9": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). createTextNode (($2));})());
+            },
+            "__extjs_72ed4dd7cc16a087b641b9e836cf402717082c62": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){($1). checked = false ;})());
+            },
+            "__extjs_e031828dc4b7f1b8d9625d60486f03b0936c3f4f": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){try {return {value : function (){return ($1). removeChild (($2));}(), success : true};}catch (error){return {error : error , success : false};}})());
+            },
+            "__extjs_92703949057b4a5481134e61f673bf94160d6d50": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). firstChild ;})());
+            },
+            "__extjs_6ae2f0d3420b3969fbdee9a1a7eba4cef664b99f": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Object) | 0;
+            },
+            "__extjs_fe1e80bdcfe7f7cb820b64a40f6d286cbd345955": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Array) | 0;
+            },
+            "__extjs_74d5764ddc102a8d3b6252116087a68f2db0c9d4": function($0) {
+                Module.STDWEB_PRIVATE.from_js($0, (function(){return window ;})());
+            },
+            "__extjs_9f22d4ca7bc938409787341b7db181f8dd41e6df": function($0) {
+                Module.STDWEB_PRIVATE.increment_refcount( $0 );
+            },
+            "__extjs_e46ab2619239db9ed13181482883f6d948e04edc": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HTMLElement) | 0;
+            },
+            "__extjs_c6c601099276bb9dc8ea74d54bdc9ce86899310b": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){let db = ($1); let id = ($2); return db.get (id);})());
+            },
+            "__extjs_db0226ae1bbecd407e9880ee28ddc70fc3322d9c": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);Module.STDWEB_PRIVATE.unregister_raw_value (($0));
+            },
+            "__extjs_dbbc1d7e712682edbf5208680fd4b7890164f467": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). checked ;})());
+            },
+            "__extjs_b99a06f7004f71b3f4e223fbd9f24cf2620b1047": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). message ;})());
+            },
+            "__extjs_dc2fd915bd92f9e9c6a3bd15174f1414eee3dbaf": function() {
+                console.error( 'Encountered a panic!' );
+            },
+            "__extjs_a342681e5c1e3fb0bdeac6e35d67bf944fcd4102": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). value ;})());
+            },
+            "__extjs_ee41f864457c794c278cdcafc28967ffbac29706": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1);})());
+            },
+            "__extjs_9e1ed4a3385107a34e4714c224d2905a94d4e3ee": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Promise) | 0;
+            },
+            "__extjs_ff5103e6cc179d13b4c7a785bdce2708fd559fc0": function($0) {
+                Module.STDWEB_PRIVATE.tmp = Module.STDWEB_PRIVATE.to_js( $0 );
+            },
             "__extjs_496ebd7b1bc0e6eebd7206e8bee7671ea3b8006f": function($0, $1, $2) {
                 $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelector (($2));})());
             },
-            "__extjs_91731db9b18c167a0dca230e25d8f4bbf6600f11": function($0, $1, $2) {
-                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelectorAll (($2));})());
+            "__extjs_4cc2b2ed53586a2bd32ca2206724307e82bb32ff": function($0, $1) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);($0). appendChild (($1));
+            },
+            "__extjs_de2896a7ccf316486788a4d0bc433c25d2f1a12b": function($0) {
+                var r = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );return (r instanceof DOMException) && (r.name === "NotFoundError");
+            },
+            "__extjs_1c8769c3b326d77ceb673ada3dc887cf1d509509": function($0) {
+                Module.STDWEB_PRIVATE.from_js($0, (function(){return document ;})());
+            },
+            "__extjs_a3ce11f32db376f1bd7e64a57118a6fdcff384de": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){return new PouchDB (($1));})());
+            },
+            "__extjs_8c32019649bb581b1b742eeedfc410e2bedd56a6": function($0, $1) {
+                var array = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );Module.STDWEB_PRIVATE.serialize_array( $1, array );
+            },
+            "__extjs_93b9872dc3d816765ab0e68585457a4b8d33560b": function($0) {
+                $0 = Module.STDWEB_PRIVATE.to_js($0);Promise.resolve (). then (function (){($0)();});
+            },
+            "__extjs_6335075a75e36f6bc0c9ba8dce389068e0a2d5d8": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Error) | 0;
+            },
+            "__extjs_7ed1f62e776725bc93d54f5154abfb28a460024a": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof MouseEvent) | 0;
+            },
+            "__extjs_222c2fb5a29f68d0c91605a201d353ebe248e0ee": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1)[($2)];})());
+            },
+            "__extjs_5155ff60c7a2bc3735b833bf70bef22b55926e20": function($0, $1, $2, $3) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);$3 = Module.STDWEB_PRIVATE.to_js($3);Module.STDWEB_PRIVATE.from_js($0, (function(){var db = ($1); var new_doc = ($2); var id = ($3); new_doc._id = id ; return db.get (id). then (function (doc){new_doc._rev = doc._rev ; return db.put (new_doc);}). catch (function (err){console.log ("saving new state " + new_doc); return db.post (new_doc);});})());
+            },
+            "__extjs_1fabc0ebb27ef89261582427650910a67df27026": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof HashChangeEvent) | 0;
+            },
+            "__extjs_72fc447820458c720c68d0d8e078ede631edd723": function($0, $1, $2) {
+                console.error( 'Panic location:', Module.STDWEB_PRIVATE.to_js_string( $0, $1 ) + ':' + $2 );
+            },
+            "__extjs_f814fda503cb20016f78481f85431d48a7c4e731": function($0, $1) {
+                var object = Module.STDWEB_PRIVATE.acquire_js_reference( $0 );Module.STDWEB_PRIVATE.serialize_object( $1, object );
             },
             "__extjs_945eb2b8fb56cb174558d6a1d81362ec08745d51": function($0, $1) {
                 $0 = Module.STDWEB_PRIVATE.to_js($0);$1 = Module.STDWEB_PRIVATE.to_js($1);var callback = ($0); ($1). then (function (value){callback (value , true);}, function (value){callback (value , false);});
+            },
+            "__extjs_97495987af1720d8a9a923fa4683a7b683e3acd6": function($0, $1) {
+                console.error( 'Panic error message:', Module.STDWEB_PRIVATE.to_js_string( $0, $1 ) );
+            },
+            "__extjs_cf32fb39093cd2549f37c2d392ef3198dcaa2ad4": function($0) {
+                return (Module.STDWEB_PRIVATE.acquire_js_reference( $0 ) instanceof Node) | 0;
+            },
+            "__extjs_93af82e49c19ea054c46b4bbf6fdd44f59c8bb67": function($0, $1) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);Module.STDWEB_PRIVATE.from_js($0, (function(){let state = ($1); console.log ("Current State is: " + state)})());
+            },
+            "__extjs_91731db9b18c167a0dca230e25d8f4bbf6600f11": function($0, $1, $2) {
+                $1 = Module.STDWEB_PRIVATE.to_js($1);$2 = Module.STDWEB_PRIVATE.to_js($2);Module.STDWEB_PRIVATE.from_js($0, (function(){return ($1). querySelectorAll (($2));})());
             },
             "__web_on_grow": function() {
                 const buffer = Module.instance.exports.memory.buffer;
@@ -596,7 +607,7 @@ Module.STDWEB_PRIVATE.acquire_tmp = function( dummy ) {
 }
 
 
-    if( typeof window === "undefined" ) {
+    if( typeof window === "undefined" && typeof process === "object" ) {
         const fs = require( "fs" );
         const path = require( "path" );
         const wasm_path = path.join( __dirname, "kyudo-tracker.wasm" );
