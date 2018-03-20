@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Florian Gilcher <florian.gilcher@asquera.de>"]
 
 [dependencies]
-stdweb = { git = "https://github.com/koute/stdweb.git" }
+stdweb = { git = "https://github.com/koute/stdweb.git", features = ["experimental_features_which_may_break_on_minor_version_bumps"] }
 serde = "1"
 serde_json = "1"
 serde_derive = "1"

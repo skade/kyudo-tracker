@@ -39,7 +39,8 @@ use stdweb::web::event::{
 
 use stdweb::web::html_element::InputElement;
 
-use stdweb::{Value, Null, Promise, PromiseFuture};
+use stdweb::{Value, Null};
+use stdweb::{Promise, PromiseFuture};
 
 // Shamelessly stolen from webplatform's TodoMVC example.
 macro_rules! enclose {
@@ -78,12 +79,12 @@ impl Database {
         promise
     }
 
-    fn insert_or_update<T>(&self, doc: &T, id: &str) -> PromiseFuture<T>
+    fn insert_or_update<T>(&self, doc: &T, id: &str) -> PromiseFuture<Value>
         where T: JsSerialize + 'static,
               T: TryFrom<stdweb::Value>,
               <T as stdweb::unstable::TryFrom<stdweb::Value>>::Error: std::fmt::Debug {
 
-        let doc: PromiseFuture<T> = js! {
+        let doc: PromiseFuture<Value> = js! {
             var db = @{&self.db};
             var new_doc = @{&doc};
             var id = @{id};
@@ -92,14 +93,21 @@ impl Database {
 
             return db.get(id).then(function(doc) {
                 new_doc._rev = doc._rev;
-                return db.put(state);
+                return db.put(new_doc);
             }).catch(function(err) {
-                console.log("saving new state " + state);
-                return db.post(state);
+                console.log("saving new state " + new_doc);
+                return db.post(new_doc);
             });
         }.try_into().unwrap();
 
         doc
+    }
+
+    fn bulk<I: Iterator<Item=Value>>(&self, bulk: I) {
+        console!( log, "Bulk");
+        for v in bulk {
+            console!( log, v )
+        }
     }
 }
 
@@ -136,6 +144,8 @@ impl Set {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 struct Session {
     sets: Vec<Set>,
+    _id: Option<String>,
+    _rev: Option<String>,
 }
 
 impl Session {
@@ -151,6 +161,10 @@ impl Session {
         Box::new(self.sets.iter().flat_map(|s| s.hits.iter()))
     }
 }
+
+js_serializable!( Session );
+js_deserializable!( Session );
+
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone)]
 struct State {
@@ -168,6 +182,30 @@ impl State {
         js! { 
             let state = @{debug_string};
             console.log("Current State is: " + state)
+        }
+    }
+
+    fn iter<'a>(&'a self) -> StateIterator<'a, Box<Iterator<Item=&'a Session> + 'a>> {
+        let iter =  Box::new(std::iter::once(&self.current).
+            chain(self.past.iter()));
+
+        StateIterator { past_iterator: iter }
+    }
+}
+
+struct StateIterator<'a, I> where I: Iterator<Item=&'a Session> + 'a {
+    past_iterator: I
+}
+
+impl<'a, I> Iterator for StateIterator<'a, I>
+    where I: Iterator<Item=&'a Session> {
+    type Item = Value;
+
+    fn next(&mut self) -> Option<Value> {
+        if let Some(next) = self.past_iterator.next() {
+            Some(next.try_into().unwrap())
+        } else {
+            None
         }
     }
 }
@@ -193,10 +231,14 @@ fn save_state( state: &StateRef, db: Rc<Database> ) {
 
     let state_borrow = state.borrow();
 
+    let iter = state_borrow.iter();
+
+    db.bulk(iter);
+
     let insertion = db.insert_or_update(&*state_borrow, "mydoc");
 
-    let future = insertion.and_then(|_| {
-        console!( log, format!( "Saved ") );
+    let future = insertion.and_then(|v| {
+        console!( log, format!( "Saved: {:?}", v) );
         Ok(())
     }).or_else(|e| {
         console!( log, format!( "Hit Error: {}", e ) );
